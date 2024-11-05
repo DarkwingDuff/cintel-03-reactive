@@ -11,6 +11,7 @@ import plotly.express as px
 from io import BytesIO
 from shiny import render
 from shinywidgets import output_widget, render_widget, render_plotly
+from shiny import reactive
 import base64
 
 penguins_df = palmerpenguins.load_penguins()
@@ -143,3 +144,18 @@ with ui.layout_columns():
         @render.data_frame
         def plot4():
             return render.DataGrid(data, selection_mode="row")
+
+
+# --------------------------------------------------------
+# Reactive calculations and effects
+# --------------------------------------------------------
+
+# Add a reactive calculation to filter the data
+# By decorating the function with @reactive, we can use the function to filter the data
+# The function will be called whenever an input functions used to generate that output changes.
+# Any output that depends on the reactive function (e.g., filtered_data()) will be updated when the data changes.
+
+
+@reactive.calc
+def filtered_data():
+    return penguins_df
