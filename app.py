@@ -134,12 +134,6 @@ def filtered_data():
 with ui.layout_columns():
     with ui.card(full_screen=True):
 
-        input1 = "selected_attribute"
-        input2 = "selected_species"
-
-        # Combine the inputs into a single string
-        combined_label = f"{input1} {input2}"  # You can change formatting as needed
-        
         @render.plot(alt="A Seaborn histogram on penguin body mass in grams.")
         def seaborn_histogram1():
             selected_attribute = input.selected_attribute()
