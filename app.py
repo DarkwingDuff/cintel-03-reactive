@@ -60,56 +60,26 @@ with ui.sidebar(open="open"):
         target="_blank",
     )
 
-with ui.card(full_screen=True):
-
-    ui.card_header("Plotly Scatterplot: Species")
-
-    @render_widget
-    def scatter_plot():
-        selected_species = input.Selected_Species_List()
-        selected_attribute = input.selected_attribute()
-        filtered_df = penguins_df[penguins_df["species"].isin(selected_species)]
-        fig = px.scatter(
-            filtered_df,
-            x="bill_length_mm",
-            y="bill_depth_mm",
-            color="species",
-            title="Scatter Plot of Penguin Bill Dimensions",
-        )
-        return fig
-
 
 with ui.layout_columns():
+
     with ui.card(full_screen=True):
 
-        @output
-        @render.ui
-        def seaborn_histogram():
-            # Reactive inputs
-            selected_attribute = input.selected_attribute()
-            bin_count = input.seaborn_bin_count()
+        ui.card_header("Plotly Scatterplot: Species")
 
-            # Filter the data based on species selection
+        @render_widget
+        def scatter_plot():
             selected_species = input.Selected_Species_List()
+            selected_attribute = input.selected_attribute()
             filtered_df = penguins_df[penguins_df["species"].isin(selected_species)]
-
-            # Create the Seaborn histogram plot
-            plt.figure(figsize=(8, 6))
-            sns.histplot(
-                filtered_df[selected_attribute].dropna(), bins=bin_count, kde=True
+            fig = px.scatter(
+                filtered_df,
+                x="bill_length_mm",
+                y="bill_depth_mm",
+                color="species",
+                title="Scatter Plot of Penguin Bill Dimensions",
             )
-            plt.xlabel(selected_attribute)
-            plt.title(f"Seaborn Histogram of {selected_attribute}")
-
-            # Save plot to a bytes buffer and encode as base64
-            buf = BytesIO()
-            plt.savefig(buf, format="png")
-            plt.close()
-            buf.seek(0)
-            image_base64 = base64.b64encode(buf.read()).decode("utf-8")
-
-            # Return the base64-encoded image as an HTML <img> tag
-            return ui.HTML(f'<img src="data:image/png;base64,{image_base64}" />')
+            return fig
 
     with ui.card(full_screen=True):
 
@@ -159,3 +129,48 @@ with ui.layout_columns():
 @reactive.calc
 def filtered_data():
     return penguins_df
+
+
+with ui.layout_columns():
+    with ui.card(full_screen=True):
+
+        @render.plot(alt="A Seaborn histogram on penguin body mass in grams.")
+        def seaborn_histogram1():
+            histplot = sns.histplot(
+                data=penguins_df, x="body_mass_g", bins=input.seaborn_bin_count()
+            )
+            histplot.set_title("Palmer Penguins")
+            histplot.set_xlabel("Mass (g)")
+            histplot.set_ylabel("Count")
+            return histplot
+
+    with ui.card(full_screen=True):
+
+        @output
+        @render.ui
+        def seaborn_histogram():
+            # Reactive inputs
+            selected_attribute = input.selected_attribute()
+            bin_count = input.seaborn_bin_count()
+
+            # Filter the data based on species selection
+            selected_species = input.Selected_Species_List()
+            filtered_df = penguins_df[penguins_df["species"].isin(selected_species)]
+
+            # Create the Seaborn histogram plot
+            plt.figure(figsize=(8, 6))
+            sns.histplot(
+                filtered_df[selected_attribute].dropna(), bins=bin_count, kde=True
+            )
+            plt.xlabel(selected_attribute)
+            plt.title(f"Seaborn Histogram of {selected_attribute}")
+
+            # Save plot to a bytes buffer and encode as base64
+            buf = BytesIO()
+            plt.savefig(buf, format="png")
+            plt.close()
+            buf.seek(0)
+            image_base64 = base64.b64encode(buf.read()).decode("utf-8")
+
+            # Return the base64-encoded image as an HTML <img> tag
+            return ui.HTML(f'<img src="data:image/png;base64,{image_base64}" />')
