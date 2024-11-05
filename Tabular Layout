@@ -19,8 +19,8 @@ print(penguins_df)
 
 data = penguins_df
 
-
 ui.page_opts(title="Penguin ", fillable=True, class_="scrollable")
+ui.tags.style(":root { --bs-primary-rgb: 113,46,246; }")
 
 with ui.sidebar(open="open"):
     ui.h2("Sidebar")
@@ -55,16 +55,13 @@ with ui.sidebar(open="open"):
 # The function will be called whenever an input functions used to generate that output changes.
 # Any output that depends on the reactive function (e.g., filtered_data()) will be updated when the data changes.
 
-
 with ui.layout_columns():
-    # Tabbed tabset card for plots
     with ui.navset_card_tab(id="plot_tabs"):
-        # Plotly Scatterplot tab
         with ui.nav_panel("Scatterplot"):
 
             with ui.card(full_screen=True):
 
-                ui.card_header("Scatterplot: Species")
+                ui.card_header("Scatterplot: Species", style="color:white; background:#2A2A2A !important;")
 
                 @render_widget
                 def scatter_plot():
@@ -82,40 +79,45 @@ with ui.layout_columns():
                     )
                     return fig
 
-        # Seaborn Histogram tab
         with ui.nav_panel("Density Plot"):
+             with ui.card(full_screen=True):
 
-            @render_plotly
-            def density_plot():
-                filtered_penguins = penguins_df[
-                    penguins_df["species"].isin(input.Selected_Species_List())
-                ]
-                fig = px.density_contour(
-                    filtered_penguins,
-                    x="bill_length_mm",
-                    y="flipper_length_mm",
-                    color="species",
-                    title="Density Plot: Bill Length vs Bill Depth by Species",
-                    labels={
-                        "bill_length_mm": "Bill Length (mm)",
-                        "flipper_length_mm": "Flipper Depth (mm)",
-                    },
-                )
-                return fig
+                ui.card_header("Density Plot: Species", style="color:white; background:#3101B7 !important;")
+            
+                @render_plotly
+                def density_plot():
+                    filtered_penguins = penguins_df[
+                        penguins_df["species"].isin(input.Selected_Species_List())
+                    ]
+                    fig = px.density_contour(
+                        filtered_penguins,
+                        x="bill_length_mm",
+                        y="flipper_length_mm",
+                        color="species",
+                        title="Density Plot: Bill Length vs Bill Depth by Species",
+                        labels={
+                            "bill_length_mm": "Bill Length (mm)",
+                            "flipper_length_mm": "Flipper Depth (mm)",
+                        },
+                    )
+                    return fig
 
-        # Plotly Histogram tab
         with ui.nav_panel("Tips Histogram"):
+            with ui.card(full_screen=True):
 
-            @render_plotly
-            def plot1():
-                return px.histogram(px.data.tips(), y="tip")
+                ui.card_header("Tips Histogram", style="color:white; background:#06B22F !important;")
 
-        # Grouped Bar Plot tab
-        with ui.nav_panel("Bills Histogram"):
+                @render_plotly
+                def plot1():
+                    return px.histogram(px.data.tips(), y="tip")
 
-            @render_plotly
-            def plot2():
-                return px.histogram(px.data.tips(), y="total_bill")
+        with ui.nav_panel("Bill Histogram"):
+                with ui.card(full_screen=True):
+                    ui.card_header("Bill Histogram", style="color:white; background:#B3052A !important;")
+    
+                    @render_plotly
+                    def plot2():
+                        return px.histogram(px.data.tips(), y="total_bill")
 
         with ui.nav_panel("Seaborn Histograms"):
 
@@ -125,7 +127,7 @@ with ui.layout_columns():
 
             with ui.layout_columns():
                 with ui.card(full_screen=True):
-
+                    ui.card_header("Palmer Penguin Historgram", style="color:Black; background:#D2F61E !important;")
                     @render.plot(
                         alt="A Seaborn histogram on penguin body mass in grams."
                     )
@@ -151,7 +153,7 @@ with ui.layout_columns():
                         return histplot
 
                 with ui.card(full_screen=True):
-
+                    ui.card_header("Penguin Historgram", style="color:White; background:#4D9232 !important;")
                     @output
                     @render.ui
                     def seaborn_histogram():
