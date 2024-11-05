@@ -128,7 +128,7 @@ with ui.layout_columns():
 
 @reactive.calc
 def filtered_data():
-    return penguins_df
+    return data
 
 
 with ui.layout_columns():
@@ -136,8 +136,14 @@ with ui.layout_columns():
 
         @render.plot(alt="A Seaborn histogram on penguin body mass in grams.")
         def seaborn_histogram1():
+            selected_attribute = input.selected_attribute()
+            bin_count = input.seaborn_bin_count()
+
+            # Filter the data based on species selection
+            selected_species = input.Selected_Species_List()
+            filtered_df = penguins_df[penguins_df["species"].isin(selected_species)]
             histplot = sns.histplot(
-                data=penguins_df, x="body_mass_g", bins=input.seaborn_bin_count()
+                filtered_df[selected_attribute].dropna(), bins=bin_count, kde=True
             )
             histplot.set_title("Palmer Penguins")
             histplot.set_xlabel("Mass (g)")
